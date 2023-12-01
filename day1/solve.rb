@@ -6,23 +6,33 @@ end
 
 arr = []
 
-input.each_line do |line|
-  line_digit = ""
-  line.each_char do |char|
-    if numeric?(char)
-      # start with double digits based on the first numeric found
-      if line_digit.length == 0
-        line_digit << char
-      end
+mapping = {
+  'one' => '1',
+  'two' => '2',
+  'three' => '3',
+  'four' => '4',
+  'five' => '5',
+  'six' => '6',
+  'seven' => '7',
+  'eight' => '8',
+  'nine' => '9',
+}
 
-      # if line_digit is two chars already, cut last before appending new
-      if line_digit.length == 2
-        line_digit = line_digit[0...-1]
-      end
-      line_digit << char
+input.each_line do |line|
+  ## swap reggied based on if you want part 1 or part 2 solution
+  # reggied = line.scan(/(?=(\d))/).flatten
+  reggied = line.scan(/(?=(\d|one|two|three|four|five|six|seven|eight|nine))/).flatten
+  mapped = []
+
+  reggied.each do |reggie|
+    if mapping.include? reggie
+      mapped << mapping[reggie]
+    else
+      mapped << reggie
     end
   end
-  arr << line_digit
+
+  arr << "#{mapped[0]}#{mapped[-1]}"
 end
 
 puts arr.map(&:to_i).sum
