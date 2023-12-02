@@ -35,4 +35,6 @@ input.each_line do |line|
   arr << "#{mapped[0]}#{mapped[-1]}"
 end
 
+input.close
+
 puts arr.map(&:to_i).sum
