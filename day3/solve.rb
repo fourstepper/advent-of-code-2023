@@ -80,8 +80,6 @@ numbers_matrix.each do |item|
   end
 end
 
-puts gear_matrix
-
 puts part1.map(&:to_i).sum
 
 part2 = []
