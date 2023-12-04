@@ -8,7 +8,6 @@ input.each_line do |line|
   cards[number]['received'] = line.split(':')[1].split('|')[1].chomp.split(' ').map(&:to_i)
   cards[number]['count'] = 1
 end
-input.close
 
 part1 = []
 cards.each_value do |value|
@@ -34,13 +33,14 @@ p part1.sum
 part2 = []
 cards.each do |key, value|
   times_matched = (value['winning'] & value['received']).length
-  times_matched.times do |i|
-    cards[(key.to_i + i + 1).to_s]['count'] += 1
+
+  1.upto(times_matched) do |i|
+    cards[(key.to_i + i).to_s]['count'] += cards[key]['count']
   end
 end
 
-cards.each do |c|
-  p c
+cards.each_value do |i|
+  part2 << i['count']
 end
 
 p part2.sum
