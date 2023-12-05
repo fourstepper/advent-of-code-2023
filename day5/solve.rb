@@ -1,6 +1,7 @@
 input = File.open('input.txt', 'r')
 
 newline_split = input.read.split("\n\n")
+input.close
 
 data = {}
 
@@ -30,6 +31,30 @@ data['seeds'].each do |seed|
   end
 end
 
-p part1
+part2 = nil
+seeds_from_ranges = []
 
-input.close
+data['seeds'].each_slice(2).to_a.each do |i|
+  [*i[0]..(i[0] + i[1])].each do |seed|
+    location = seed
+    data.each do |key, value|
+      if key == 'seeds'
+        next
+      end
+
+      value.each_slice(3).to_a.each do |i|
+        if location.between?(i[1], i[1] + i[2])
+          location += i[0] - i[1]
+          break
+        end
+      end
+    end
+
+    if !part2 || location < part2
+      part2 = location
+    end
+  end
+end
+
+p part1
+p part2
