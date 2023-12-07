@@ -1,57 +1,75 @@
-ORDER = "23456789TJQKA"
+PART2 = true
+ORDER = PART2 ? "J23456789TQKA" : "23456789TJQKA"
 
 input = File.open('input.txt', 'r')
 
-def parse_hand(hand)
-  return hand.chars.tally.sort_by { |k, v| v }.reverse
-end
+data = input.readlines
 
-def sort_hands(hand)
-  parsed_hand = parse_hand(hand)
+input.close()
 
-  if parsed_hand[0][1] == 5
-    sorting_score = 7
-  elsif parsed_hand[0][1] == 4
-    sorting_score = 6
-  elsif parsed_hand[0][1] == 3
-    if parsed_hand[1][1] == 2
-      sorting_score = 5
-    else
-      sorting_score = 4
+class Hand
+  include Comparable
+  attr_reader :name, :cards, :bid
+
+  def self.parse(line)
+    c, b = line.split
+    bid = b.to_i
+    cards = c.chars.map do |char|
+      ORDER.index(char) + 2 # we start at two
     end
-  elsif parsed_hand[0][1] == 2
-    if parsed_hand[1][1] == 2
-      sorting_score = 3
-    else
-      sorting_score = 2
-    end
-  elsif parsed_hand[0][1] == 1
-    sorting_score = 1
+    new(cards, c, bid)
   end
 
-  return sorting_score, ORDER.index(hand[0][0]), ORDER.index(hand[1][0]),
-    ORDER.index(hand[2][0]), ORDER.index(hand[3][0]), ORDER.index(hand[4][0])
+  def initialize(cards, name, bid)
+    @name = name
+    @cards = cards
+    @bid = bid
+  end
+
+  def <=>(other)
+    [type, cards] <=> [other.type, other.cards]
+  end
+
+  def type
+    card_counts = cards.tally
+    if PART2
+      jokers = cards.count(2) # J "maps" to integer 2
+      card_counts.delete(2)
+    else
+      jokers = 0
+    end
+
+    # the decimal-pointed numbers explained really well here https://youtu.be/bASPI9cV7R4?si=8WBMdf8JVHsVYer0&t=1239
+    # basically, a single joker for two of a kind makes it three of a kind (directly up a one)
+    # however, adding a joker to two pairs makes it a full house - higher than a three of a pair
+    if card_counts.values.any?(5)
+      5
+    elsif card_counts.values.any?(4)
+      4 + jokers
+    elsif card_counts.values.any?(3) && card_counts.values.any?(2)
+      3.5 + jokers
+    elsif card_counts.values.any?(3)
+      3 + jokers
+    elsif card_counts.values.count(2).equal?(2)
+      2.5 + jokers
+    elsif card_counts.values.any?(2)
+      2 + jokers
+    else
+      # take minimum value (protects against 5 + 1 jokers)
+      [1 + jokers, 5].min
+    end
+  end
 end
 
-data = {}
-hands = []
-input.each do |line|
-  hand = line.split[0]
-  bid = line.split[1].to_i
-
-  data[hand] = bid
-  hands << hand
+hands = data.map do |line|
+  Hand.parse(line)
 end
 
-input.close
-
-sorted_hands = hands.sort_by { |hand| sort_hands(hand) }
+sorted_hands = hands.sort
 
 result = 0
-rank = 1
-sorted_hands.each do |hand|
-  result += data[hand] * rank
-  rank += 1
+sorted_hands.each_with_index do |h, i|
+  result += h.bid * (i + 1)
 end
 
 p result
