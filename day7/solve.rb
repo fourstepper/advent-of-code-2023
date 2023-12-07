@@ -3,7 +3,7 @@ ORDER = "23456789TJQKA"
 input = File.open('input.txt', 'r')
 
 def parse_hand(hand)
-  return hand.chars.tally.sort_by { |k, v| [v, k] }.reverse
+  return hand.chars.tally.sort_by { |k, v| v }.reverse
 end
 
 def sort_hands(hand)
