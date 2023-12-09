@@ -2,9 +2,6 @@ input = File.open('input.txt', 'r')
 
 data = input.readlines
 
-input.each_line do |line|
-end
-
 input.close()
 
 instructions = data[0].chomp
