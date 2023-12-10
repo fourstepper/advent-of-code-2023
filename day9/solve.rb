@@ -27,7 +27,7 @@ def p2(arr)
 
   to_append = []
   arr.each_with_index do |d, i|
-    unless arr.length - 1 == i
+    unless i == arr.length - 1
       to_append << arr[i + 1] - arr[i]
     end
   end
