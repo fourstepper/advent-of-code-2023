@@ -32,7 +32,7 @@ def p2(arr)
     end
   end
 
-  return arr[0] + p2(to_append)
+  return arr[0] - p2(to_append)
 end
 
 p data.map { |e| p1(e) }.sum
