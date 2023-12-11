@@ -57,4 +57,39 @@ while start_point != start_exits.last
   end
 end
 
-p pipe.size / 2
+puts "Part 1: #{pipe.size / 2}"
+
+clean_grid = Array.new(grid.size) { Array.new(grid.first.size, ' ') }
+
+pipe.each do |x, y|
+  clean_grid[x][y] = grid[x][y]
+end
+
+inside = 0
+inside_cells = []
+# explanation of the algorithm: https://youtu.be/017epvQWPtc?si=8lD6ajSZcOp9bAo4&t=1055
+clean_grid.each_with_index do |row, x|
+  row.each_with_index do |cell, y|
+    # Skips cells that are part of the pipeline
+    next if pipe.include?([x, y])
+
+    north = 0
+    south = 0
+    (y...row.size).each do |y2|
+      # Count north and south facing blockers
+      if ["J", "L", "|"].include?(clean_grid[x][y2])
+        north += 1
+      end
+      # found the S in my input and manually checked where it fits
+      if ["F", "7", "|", "S"].include?(clean_grid[x][y2])
+        south += 1
+      end
+    end
+    if [north, south].min.odd?
+      inside += 1
+      inside_cells << [x, y]
+    end
+  end
+end
+
+puts "Part 2: #{inside}"
