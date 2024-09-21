@@ -4,10 +4,10 @@ data = input.readlines
 
 input.close()
 
-instructions = data[0].chomp
+instructions = data[0].chomp  # removes newline
 parsed = {}
 
-data.map { |e| e.chomp }.drop(1).drop(1).each do |item|
+data.drop(2).each do |item|
   equal_split = item.split('=').map { |e| e.gsub("(", "").gsub(")", "") }.map(&:strip)
   parsed[equal_split[0]] = equal_split[1].split(',').map(&:strip)
 end
